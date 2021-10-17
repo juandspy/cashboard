@@ -1,0 +1,2 @@
+[database]
+path = "testdata/my_cash.gnucash"
