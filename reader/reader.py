@@ -1,4 +1,6 @@
 import piecash
+from typing import List
+
 
 class CashStore:
     def __init__(self, book_path):
@@ -9,21 +11,22 @@ class CashStore:
         
         self.accounts = get_accounts(self.book)
 
-def get_accounts(book: piecash.core.book.Book):
-    accounts = []
-    for acc in book.root_account.children:        
-        accounts.append(acc)
-    return accounts
-
 class asset:
     def __init__(self, name, balance, last_month_balance):
         self.name = name 
         self.balance = balance 
         self.last_mont_balance = last_month_balance
 
-def get_assets(book: piecash.core.book.Book):
+def get_accounts(book: piecash.core.book.Book) -> List[asset]:
+    accounts = []
+    for acc in book.root_account.children:        
+        accounts.append(acc)
+    return accounts
+
+def get_assets(book: piecash.core.book.Book) -> List[asset]:
     assets = []
     for acc in book.accounts(type="ASSET").children:
+        print(type(acc))
         assets.append(
             asset(
                 name=acc.name, 
