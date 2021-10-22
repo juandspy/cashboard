@@ -15,17 +15,17 @@ def get_accounts(book: piecash.core.book.Book):
         accounts.append(acc)
     return accounts
 
-class AssetInfo:
+class asset:
     def __init__(self, name, balance, last_month_balance):
         self.name = name 
         self.balance = balance 
         self.last_mont_balance = last_month_balance
 
-def get_assets_info(book: piecash.core.book.Book):
+def get_assets(book: piecash.core.book.Book):
     assets = []
     for acc in book.accounts(type="ASSET").children:
         assets.append(
-            AssetInfo(
+            asset(
                 name=acc.name, 
                 balance=acc.get_balance(natural_sign=False), 
                 last_month_balance=0)
