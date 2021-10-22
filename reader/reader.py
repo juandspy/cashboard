@@ -8,10 +8,26 @@ class CashStore:
             do_backup=False)
         
         self.accounts = get_accounts(self.book)
-    
+
 def get_accounts(book: piecash.core.book.Book):
-    print(book.root_account)
     accounts = []
-    for acc in book.root_account.children:
+    for acc in book.root_account.children:        
         accounts.append(acc)
     return accounts
+
+class AssetInfo:
+    def __init__(self, name, balance, last_month_balance):
+        self.name = name 
+        self.balance = balance 
+        self.last_mont_balance = last_month_balance
+
+def get_assets_info(book: piecash.core.book.Book):
+    assets = []
+    for acc in book.accounts(type="ASSET").children:
+        assets.append(
+            AssetInfo(
+                name=acc.name, 
+                balance=acc.get_balance(natural_sign=False), 
+                last_month_balance=0)
+        )
+    return assets
