@@ -1,6 +1,6 @@
 import toml
 
-from .config import Configuration
+from config import Configuration
 
 def parse_config(config_path: str):
     """
