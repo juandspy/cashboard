@@ -7,8 +7,8 @@ from utils import load_data, pretty_currency
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 st.title('Cashboard')
-
-assets = load_data()
+depth = st.number_input('Insert desired depth', value=1, step=1)
+assets = load_data(depth)
 
 st.subheader('Assets')
 assets_columns = st.columns(len(assets))

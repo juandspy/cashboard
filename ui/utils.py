@@ -16,12 +16,11 @@ NOISE_PERCENTAGE = 0.7
 N_DELTA_DAYS = 30
 
 # @st.cache
-def load_data():
-    print("ok")
+def load_data(depth: int = 1):
     now = datetime.now()
     store = CashStore(book_path=config.database)
 
-    assets = get_assets(store.book, depth=1)
+    assets = get_assets(store.book, depth=depth)
     for asset in assets:
         asset.set_delta(now.replace(month=now.month - 1 or 12))
     return assets
