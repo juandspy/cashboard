@@ -10,7 +10,7 @@ class CashStore:
             self.book =  piecash.open_book(
                 book_path, 
                 readonly=True, 
-                do_backup=False,
+                do_backup=True,
                 open_if_lock=True)
         elif book != None:
             self.book = book
@@ -27,8 +27,8 @@ class Asset:
         self.currency = currency
         self.account = account
     
-    def set_delta(self, days):
-        self.delta = get_asset_delta(self.account, days)
+    def set_delta(self, from_date):
+        self.delta = get_asset_delta(self.account, from_date)
     
     def get_monthly_data(self):
         now = datetime.now()
@@ -36,8 +36,9 @@ class Asset:
         for i in range(1, now.month + 1):
             next_month_first_day = datetime(year=now.year, month=i+1, day=1)
             month_last_day = next_month_first_day - timedelta(days=1)
-            month_balance = get_asset_date_balance(self.account, month_last_day) # calculate balance for first day of month
+            month_balance = get_asset_balance_at_date(self.account, month_last_day) # calculate balance for first day of month
             data[i-1] = month_balance
+        print(data)
         return data
 
 def get_accounts(book: piecash.core.book.Book) -> List[piecash.core.account.Account]:
@@ -78,14 +79,17 @@ def process_account(acc: piecash.core.account.Account,
             assets.extend(sub_assets)
     return assets
 
-def get_asset_delta(asset: piecash.core.account.Account, date: datetime.time) -> float:
+def get_asset_delta(asset: piecash.core.account.Account, from_date: datetime.time) -> float:
     delta = 0
 
     for split in asset.splits:
-        if split.transaction.enter_date >= date.replace(tzinfo=pytz.utc):
+        if split.transaction.enter_date >= from_date.replace(tzinfo=pytz.utc):
             delta += split.quantity
     return float(delta)
 
-def get_asset_date_balance(asset: piecash.core.account.Account, date: datetime.time) -> float:
-    delta = get_asset_delta(asset, date)
-    return float(asset.get_balance()) - delta
+def get_asset_balance_at_date(asset: piecash.core.account.Account, date: datetime.time) -> float:
+    balance = 0
+    for split in asset.splits:
+        if split.transaction.enter_date <= date.replace(tzinfo=pytz.utc):
+            balance += split.quantity
+    return float(balance)

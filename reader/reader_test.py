@@ -8,7 +8,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../testdata"))
 from mocks import mock_book, TRANSACTION_VALUE, BANK_INITIAL_VALUE, BANK_ACCOUNT_NAME, CASH_INITIAL_VALUE, CASH_ACCOUNT_NAME, MONTHS_AFTER_INITIAL_OPENING, opening_balance_month
 
-from reader import CashStore, get_assets, get_asset_delta, get_asset_date_balance
+from reader import CashStore, get_assets, get_asset_delta, get_asset_balance_at_date
 
 mock_store = CashStore(book=mock_book)
 
@@ -31,13 +31,13 @@ def test_get_asset_delta():
 
 def test_get_asset_date_balance():
     assets = get_assets(mock_store.book)
-    assert get_asset_date_balance(assets[0].account, now.replace(year=now.year - 5)) == 0
-    assert get_asset_date_balance(assets[0].account, now.replace(day=now.day - 5)) == BANK_INITIAL_VALUE
-    assert get_asset_date_balance(assets[0].account, now) == BANK_INITIAL_VALUE-TRANSACTION_VALUE
+    assert get_asset_balance_at_date(assets[0].account, now.replace(year=now.year - 5)) == 0
+    assert get_asset_balance_at_date(assets[0].account, now.replace(day=now.day - 5)) == BANK_INITIAL_VALUE
+    assert get_asset_balance_at_date(assets[0].account, now) == BANK_INITIAL_VALUE-TRANSACTION_VALUE
 
-    assert get_asset_date_balance(assets[1].account, now.replace(year=now.year - 5)) == 0
-    assert get_asset_date_balance(assets[1].account, now.replace(day=now.day - 5)) == CASH_INITIAL_VALUE
-    assert get_asset_date_balance(assets[1].account, now) == CASH_INITIAL_VALUE+TRANSACTION_VALUE
+    assert get_asset_balance_at_date(assets[1].account, now.replace(year=now.year - 5)) == 0
+    assert get_asset_balance_at_date(assets[1].account, now.replace(day=now.day - 5)) == CASH_INITIAL_VALUE
+    assert get_asset_balance_at_date(assets[1].account, now) == CASH_INITIAL_VALUE+TRANSACTION_VALUE
 
 def test_get_monthly_data(): # TODO: add the cash one
     transaction_month = now.replace(day=now.day - 5).month
