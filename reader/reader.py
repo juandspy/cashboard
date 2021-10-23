@@ -36,6 +36,7 @@ class Asset:
         for i in range(1, now.month + 1):
             next_month_first_day = datetime(year=now.year, month=i+1, day=1)
             month_last_day = next_month_first_day - timedelta(days=1)
+            month_last_day = month_last_day.replace(tzinfo=pytz.utc)
             month_balance = get_asset_balance_at_date(self.account, month_last_day) # calculate balance for first day of month
             data[i-1] = month_balance
         print(data)
@@ -79,17 +80,17 @@ def process_account(acc: piecash.core.account.Account,
             assets.extend(sub_assets)
     return assets
 
-def get_asset_delta(asset: piecash.core.account.Account, from_date: datetime.time) -> float:
+def get_asset_delta(asset: piecash.core.account.Account, from_date: datetime) -> float:
     delta = 0
 
     for split in asset.splits:
-        if split.transaction.enter_date >= from_date.replace(tzinfo=pytz.utc):
+        if split.transaction.post_date >= from_date.date():
             delta += split.quantity
     return float(delta)
 
-def get_asset_balance_at_date(asset: piecash.core.account.Account, date: datetime.time) -> float:
+def get_asset_balance_at_date(asset: piecash.core.account.Account, date: datetime) -> float:
     balance = 0
     for split in asset.splits:
-        if split.transaction.enter_date <= date.replace(tzinfo=pytz.utc):
+        if split.transaction.post_date <= date.date():
             balance += split.quantity
     return float(balance)
