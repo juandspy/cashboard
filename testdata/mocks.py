@@ -9,6 +9,8 @@ BANK_ACCOUNT_NAME = "Account 1 bank sub account"
 CASH_INITIAL_VALUE = 100
 CASH_ACCOUNT_NAME = "Account 1 cash sub account"
 
+MONTHS_AFTER_INITIAL_OPENING = 6
+
 mock_book = piecash.create_book(currency="EUR")
 EUR = mock_book.commodities.get(mnemonic="EUR")
 
@@ -47,7 +49,9 @@ cash = piecash.Account(name=CASH_ACCOUNT_NAME,
 
 now = datetime.now()
 
-transaction_date = now.replace(month=now.month - 1 or 12)
+opening_balance_month = now.month - MONTHS_AFTER_INITIAL_OPENING
+if opening_balance_month <= 0: opening_balance_month+=12
+transaction_date = now.replace(month=opening_balance_month)
 for (acc, balance) in zip ([bank, cash], [BANK_INITIAL_VALUE, CASH_INITIAL_VALUE]):
     single_transaction(
         post_date=transaction_date.date(),
