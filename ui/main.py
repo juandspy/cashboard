@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-from utils import load_data
+from utils import load_data, pretty_currency
 
 
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -19,7 +19,9 @@ for col, asset in zip(assets_columns, assets):
     # Fill metrics
     col.metric(
         asset.name, 
-        "{} {}".format(asset.balance, str(asset.currency).split(":")[1][:-1]),
+        "{} {}".format(
+            asset.balance, 
+            pretty_currency(asset.currency)),
         asset.delta)
     
     # Fill graph
