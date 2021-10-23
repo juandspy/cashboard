@@ -39,7 +39,6 @@ class Asset:
             month_last_day = month_last_day.replace(tzinfo=pytz.utc)
             month_balance = get_asset_balance_at_date(self.account, month_last_day) # calculate balance for first day of month
             data[i-1] = month_balance
-        print(data)
         return data
 
 def get_accounts(book: piecash.core.book.Book) -> List[piecash.core.account.Account]:
@@ -69,7 +68,7 @@ def process_account(acc: piecash.core.account.Account,
             assets.append(
                 Asset(
                     name=asset.name, 
-                    balance=asset.get_balance(natural_sign=False), 
+                    balance=float(asset.get_balance(natural_sign=False)), 
                     last_month_balance=0,
                     currency=asset.commodity,
                     account=asset)
