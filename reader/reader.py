@@ -63,7 +63,6 @@ def process_account(acc: piecash.core.account.Account,
     """    
     assets = []
     for asset in acc.children:
-        print("asset", asset.name, "actual depth", actual_depth, "depth", 0, "chilndre", len(asset.children))
         if len(asset.children) <= 1 or actual_depth + 1 == depth:
             assets.append(
                 Asset(
