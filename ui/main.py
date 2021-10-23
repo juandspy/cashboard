@@ -19,13 +19,13 @@ for col, asset in zip(assets_columns, assets):
     # Fill metrics
     col.metric(
         asset.name, 
-        "{} {}".format(asset.total, asset.currency),
+        "{} {}".format(asset.balance, str(asset.currency).split(":")[1][:-1]),
         asset.delta)
     
     # Fill graph
     fig.add_trace(go.Bar(
         x=MONTHS,
-        y=asset.get_data(),
+        y=asset.get_monthly_data(),
         name=asset.name
     ))
 

@@ -1,32 +1,23 @@
 import streamlit as st
-import time
+from datetime import datetime
 import numpy as np
+
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../reader"))
+
+from reader import CashStore, get_assets
 
 N_CHART_POINTS = 12
 NOISE_PERCENTAGE = 0.7
+N_DELTA_DAYS = 30
 
-class Asset: # TODO: Use reader Asset object
-    def __init__(self, name, total, currency, delta):
-        self.name = name
-        self.total = total
-        self.currency = currency
-        self.delta = delta
+# @st.cache
+def load_data():
+    print("ok")
+    now = datetime.now()
+    store = CashStore(book_path="testdata/my_cash.gnucash")
 
-    def get_data(self):
-        slope = self.total/N_CHART_POINTS
-        rand_noise = np.random.rand(N_CHART_POINTS) * NOISE_PERCENTAGE * self.total
-        line = [i * slope for i in range(N_CHART_POINTS)]
-
-        return line + rand_noise
-
-@st.cache
-def load_data():  # TODO: Use reader functions
-    """
-    Just an example on how data will be loaded.
-    """
-    time.sleep(0.5)
-    return [
-        Asset("Cash", 1020, "€", "-15%"),
-        Asset("Bank account", 3520, "€", "+3%"),
-        Asset("Cryptos", 2.3467, "BTC", "+0.32"),
-    ]
+    assets = get_assets(store.book)
+    for asset in assets:
+        asset.set_delta(now.replace(month=now.month - 1 or 12))
+    return assets
