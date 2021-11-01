@@ -58,3 +58,8 @@ def fill_dataframe(df: pd.Series) -> pd.Series:
                 continue
     df = df.sort_index()
     return df
+
+
+from typing import List
+def date_index_to_str(df: pd.Series) -> List:
+    return ["{}-{}".format(year, month) for (year, month) in df.index]
