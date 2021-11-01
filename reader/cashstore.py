@@ -43,10 +43,10 @@ class CashStore:
         """
         self.assets = get_book_assets(self.book, depth)
         self.update_assets_splits()
-        print("Setting depth to {} returns {} assets".format(depth, len(self.assets)))
+        # print("Setting depth to {} returns {} assets".format(depth, len(self.assets)))
 
     def update_assets_splits(self):
         for asset in self.assets:
-            print("Gathering data for asset".format(asset.name))
+            # print("Gathering data for asset".format(asset.name))
             asset.split_df = self.splits_df.loc[self.splits_df["account.fullname"] == asset.account.fullname]
-            print("Asset {} updated".format(asset.name))
+            # print("Asset {} updated".format(asset.name))
