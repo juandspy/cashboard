@@ -6,7 +6,7 @@ import pandas as pd
 
 from utils import load_data, pretty_currency, get_asset_delta, \
     daily_to_monthly, MONTHS, date_index_to_str
-from predictions import get_linear_regression
+from predictions import get_linear_regression, get_polynomial_regression
 
 
 now = datetime.now()
@@ -18,6 +18,8 @@ depth = input_columns[0].number_input('Insert desired depth', value=1, step=1)
 year = input_columns[1].number_input("Year", value=2021, step=1)
 plot_all_years = input_columns[2].checkbox("Plot all years")
 delta_percentage = input_columns[2].checkbox("Delta in percentage")
+reg_degree = input_columns[2].number_input(
+    "Regression degree", value=1, step=1, min_value=1, max_value=3)
 
 assets = load_data(depth)
 
@@ -33,7 +35,8 @@ for col, asset in zip(assets_columns, assets):
     # Fill metrics
     delta = float(get_asset_delta(asset, now.replace(month=now.month - 1 or 12).date())  )# TODO: cache
     if delta_percentage:
-        delta = "{:.2f} %".format(delta/asset.current_balance*100)
+        if delta != 0:
+            delta = "{:.2f} %".format(delta/asset.current_balance*100)
 
     if delta == 0:
         delta = None
@@ -69,16 +72,17 @@ for col, asset in zip(assets_columns, assets):
 
 # Remove zeros
 total_monthly_balance_no_zeros = total_monthly_balance.loc[~(total_monthly_balance==0)]
-y_pred = get_linear_regression(
-    total_monthly_balance_no_zeros.index, 
-    total_monthly_balance_no_zeros.values,
-    total_monthly_balance.index)
-
-print(date_index_to_str(monthly_balance))
-print(monthly_balance.values)
-
-print(date_index_to_str(total_monthly_balance))
-print(y_pred)
+if reg_degree == 1:
+    y_pred = get_linear_regression(
+        total_monthly_balance_no_zeros.index, 
+        total_monthly_balance_no_zeros.values,
+        total_monthly_balance.index)
+else:
+    y_pred = get_polynomial_regression(
+        total_monthly_balance_no_zeros.index, 
+        total_monthly_balance_no_zeros.values,
+        total_monthly_balance.index,
+        degree=reg_degree)
 
 if plot_all_years:
     fig.add_trace(go.Scatter(
