@@ -31,7 +31,7 @@ def pretty_currency(currency: str) -> str:
     currency = str(currency).split(":")[1][:-1]
     return mapping[currency] if currency in mapping.keys() else currency
 
-def daily_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
+def daily_to_monthly(df: pd.Series) -> pd.Series:
     if df.empty: return df
     # print(df)
     df = df.groupby([(df.index.year),(df.index.month)]).last()
@@ -39,7 +39,7 @@ def daily_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
     df = fill_dataframe(df)
     return df
 
-def fill_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+def fill_dataframe(df: pd.Series) -> pd.Series:
     first_year, first_month = df.index[0]
     last_year, last_month = df.index[-1]
 
