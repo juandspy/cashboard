@@ -1,7 +1,6 @@
 import pytest
 
-from config import Configuration
-from config_parser import parse_config
+from config_parser import parse_config, Configuration
 
 def test_parse_config():
     got = parse_config("config-devel.toml")

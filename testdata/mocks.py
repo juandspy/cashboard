@@ -1,31 +1,36 @@
 import piecash
 from piecash.core.factories import single_transaction
-from decimal import Decimal
 from datetime import datetime
 
-TRANSACTION_VALUE = Decimal(100)
+BANK_ACCOUNT_NAME = "Bank account"
+BANK_SUB_ACCOUNT_1_NAME = "Bank account 1"
+BANK_SUB_ACCOUNT_2_NAME = "Bank account 2"
+OPENING_BALANCE_NAME = "Opening Balance"
+ASSETS_NAME = "Assets"
+CURRENT_ASSETS_NAME = "Current Assets"
+CASH_ACCOUNT_NAME = "Cash account"
+
+TRANSACTION_VALUE = 100
 BANK_INITIAL_VALUE = 1000
-BANK_ACCOUNT_NAME = "Account 1 bank sub account"
 CASH_INITIAL_VALUE = 100
-CASH_ACCOUNT_NAME = "Account 1 cash sub account"
 
 MONTHS_AFTER_INITIAL_OPENING = 6
 
 mock_book = piecash.create_book(currency="EUR")
 EUR = mock_book.commodities.get(mnemonic="EUR")
 
-opening_balance = piecash.Account(name="Opening Balance",
+opening_balance = piecash.Account(name=OPENING_BALANCE_NAME,
     type="EQUITY",
     parent=mock_book.root_account,
     commodity=EUR)
 
-assets = piecash.Account(name="Assets",
+assets = piecash.Account(name=ASSETS_NAME,
     type="ASSET",
     parent=mock_book.root_account,
     commodity=EUR,
     placeholder=True,)
 
-acc = piecash.Account(name="Current Assets",
+acc = piecash.Account(name=CURRENT_ASSETS_NAME,
     type="ASSET",
     parent=assets,
     commodity=EUR,
@@ -39,6 +44,22 @@ bank = piecash.Account(name=BANK_ACCOUNT_NAME,
     description="my bank account",
     code="BANK1",)
 
+sub_bank_1 = piecash.Account(name=BANK_SUB_ACCOUNT_1_NAME,
+    type="BANK",
+    parent=bank,
+    commodity=EUR,
+    commodity_scu=BANK_INITIAL_VALUE,
+    description="my bank subaccount 1",
+    code="BANK1_1",)
+
+sub_bank_2 = piecash.Account(name=BANK_SUB_ACCOUNT_2_NAME,
+    type="BANK",
+    parent=bank,
+    commodity=EUR,
+    commodity_scu=0,
+    description="my bank subaccount 2",
+    code="BANK1_2",)
+
 cash = piecash.Account(name=CASH_ACCOUNT_NAME,
     type="CASH",
     parent=acc,
@@ -51,11 +72,11 @@ now = datetime.now()
 
 opening_balance_month = now.month - MONTHS_AFTER_INITIAL_OPENING
 if opening_balance_month <= 0: opening_balance_month+=12
-transaction_date = now.replace(month=opening_balance_month)
+opening_transaction_date = now.replace(month=opening_balance_month)
 for (acc, balance) in zip ([bank, cash], [BANK_INITIAL_VALUE, CASH_INITIAL_VALUE]):
     single_transaction(
-        post_date=transaction_date.date(),
-        enter_date=transaction_date,
+        post_date=opening_transaction_date.date(),
+        enter_date=opening_transaction_date,
         description="a month ago balance",
         value=balance,
         from_account=opening_balance,

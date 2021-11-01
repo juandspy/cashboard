@@ -1,6 +1,8 @@
 import toml
 
-from config import Configuration
+class Configuration:
+    def __init__(self, database_path):
+        self.database = database_path
 
 def parse_config(config_path: str):
     """

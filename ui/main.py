@@ -1,10 +1,13 @@
 import streamlit as st
 import plotly.graph_objects as go
+from datetime import datetime
+import pandas as pd
 
-from utils import load_data, pretty_currency
 
+from utils import load_data, pretty_currency, get_asset_delta, \
+    daily_to_monthly, MONTHS
 
-MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+now = datetime.now()
 
 st.title('Cashboard')
 
@@ -25,24 +28,29 @@ fig = go.Figure()
 
 for col, asset in zip(assets_columns, assets):
     # Fill metrics
+    delta = float(get_asset_delta(asset, now.replace(month=now.month - 1 or 12).date())  )# TODO: cache
     if delta_percentage:
-        asset_delta = "{:.2f} %".format(asset.delta/asset.balance*100)
-    else:
-        asset_delta = asset.delta
-    if asset.delta == 0:
-        asset_delta = None
+        delta = "{:.2f} %".format(delta/asset.balance*100)
+
+    if delta == 0:
+        delta = None
 
     col.metric(
         asset.name, 
         "{} {}".format(
-            asset.balance, 
+            asset.current_balance, 
             pretty_currency(asset.currency)),
-        asset_delta)
+        delta)
     
     # Fill graph
+    daily_balance = asset.get_daily_balance()
+    monthly_balance = daily_to_monthly(daily_balance)
+    if monthly_balance.empty: continue
+    
     fig.add_trace(go.Bar(
         x=MONTHS,
-        y=asset.get_monthly_data(),
+        y=monthly_balance.iloc[
+            monthly_balance.index.get_level_values('Year') == year],
         name=asset.name
     ))
 

@@ -1,31 +1,60 @@
 import streamlit as st
-from datetime import datetime
 import numpy as np
-
+import pandas as pd
+from datetime import date, timedelta
 import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../reader"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "../testdata"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "../config"))
-from mocks import mock_book, TRANSACTION_VALUE, BANK_INITIAL_VALUE, BANK_ACCOUNT_NAME, CASH_INITIAL_VALUE, CASH_ACCOUNT_NAME
-from reader import CashStore, get_assets
-from config_parser import parse_config
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
+
+from reader.cashstore import CashStore
+from config.config_parser import parse_config
 
 config = parse_config("config.toml")
 N_CHART_POINTS = 12
 NOISE_PERCENTAGE = 0.7
 N_DELTA_DAYS = 30
+MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
+def get_asset_delta(asset, from_date):
+    from reader.delta import get_asset_delta as gad
+    return gad(asset, from_date)
 
 # @st.cache
 def load_data(depth: int = 1):
-    now = datetime.now()
     store = CashStore(book_path=config.database)
+    store.set_assets_depth(depth=depth)
 
-    assets = get_assets(store.book, depth=depth)
-    for asset in assets:
-        asset.set_delta(now.replace(month=now.month - 1 or 12))
-    return assets
+    return store.assets
 
 def pretty_currency(currency: str) -> str:
     mapping = { 'EUR':'€', 'USD':'$'}
     currency = str(currency).split(":")[1][:-1]
     return mapping[currency] if currency in mapping.keys() else currency
+
+def daily_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty: return df
+    # print(df)
+    df = df.groupby([(df.index.year),(df.index.month)]).last()
+    df.index.names = ["Year", "Month"]
+    df = fill_dataframe(df)
+    return df
+
+def fill_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    first_year, first_month = df.index[0]
+    last_year, last_month = df.index[-1]
+
+    value = 0
+    for year in range(first_year, last_year+1):
+        for month in range(1, 13):
+            if (
+                (year == first_year) & (month < first_month)
+                ) | (
+                    (year == last_year) & (month > last_month)):
+                df.loc[year, month] = 0
+            try:
+                value = df.loc[year, month]
+            except KeyError:
+                df.loc[year, month] = value # set last value
+                continue
+    df = df.sort_index()
+    return df
