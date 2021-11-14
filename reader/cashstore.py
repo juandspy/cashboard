@@ -1,7 +1,7 @@
 import piecash
 from typing import List
 
-from reader.assets import get_book_assets
+from reader.accounts import get_book_accounts_of_type
 
 
 DEFAULT_DEPTH = 0
@@ -41,7 +41,7 @@ class CashStore:
     def set_assets_depth(self, depth):
         """Updates self.assets to the desired depth.
         """
-        self.assets = get_book_assets(self.book, depth)
+        self.assets = get_book_accounts_of_type("ASSET", self.book, depth)
         self.update_assets_splits()
         # print("Setting depth to {} returns {} assets".format(depth, len(self.assets)))
 
