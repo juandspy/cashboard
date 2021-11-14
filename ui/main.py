@@ -8,6 +8,7 @@ from utils import load_data, pretty_currency, get_asset_delta, \
     daily_to_monthly, MONTHS, date_index_to_str
 from predictions import get_linear_regression, get_polynomial_regression
 
+METRICS_PER_ROW = 3
 
 now = datetime.now()
 
@@ -24,7 +25,18 @@ reg_degree = input_columns[2].number_input(
 assets = load_data(depth)
 
 st.subheader('Assets')
-assets_columns = st.columns(len(assets))
+n_assets = len(assets)
+assets_columns = None
+num_rows = round(n_assets / METRICS_PER_ROW)
+
+for row in range(num_rows):
+    if assets_columns is None:
+        assets_columns = st.columns(METRICS_PER_ROW)
+    else:
+        assets_columns += st.columns(METRICS_PER_ROW)
+
+if n_assets % METRICS_PER_ROW != 0:
+    assets_columns += st.columns(n_assets % METRICS_PER_ROW)
 
 st.subheader('Year gains')
 
