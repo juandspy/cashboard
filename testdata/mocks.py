@@ -12,6 +12,7 @@ CASH_ACCOUNT_NAME = "Cash account"
 
 EXPENSES_NAME="Expenses"
 CAR_EXPENSES_NAME="Car"
+GAS_EXPENSES_NAME="Gas"
 
 TRANSACTION_VALUE = 100
 BANK_INITIAL_VALUE = 1000
@@ -91,6 +92,13 @@ car = piecash.Account(name=CAR_EXPENSES_NAME,
     commodity=EUR,
     description="car expenses",
     code="CAR",)
+
+gas = piecash.Account(name=GAS_EXPENSES_NAME,
+    type="EXPENSE",
+    parent=car,
+    commodity=EUR,
+    description="gas expenses",
+    code="GAS",)
 
 for (acc, balance) in zip ([bank, cash], [BANK_INITIAL_VALUE, CASH_INITIAL_VALUE]):
     single_transaction(
