@@ -7,12 +7,13 @@ class CashAccount:
     CashAccount is initialized with the account name, current balance, a dataframe with its transactions, the currency
     it uses and the piecash.Account object.
     """
-    def __init__(self, name, current_balance, currency, account=None):
+    def __init__(self, name, current_balance, currency, account=None, parent=''):
         self.name = name 
         self.current_balance = current_balance 
         self.currency = currency
         self.account = account
         self.split_df = pd.DataFrame()
+        self.parent = parent
 
     def set_split_df(self, split_df):
         self.split_df = split_df
@@ -54,6 +55,8 @@ def get_account_children(acc: piecash.core.account.Account,
             current_depth += 1 
             sub_accounts = get_account_children(account, current_depth=current_depth, depth=depth)
             accounts.extend(sub_accounts)
+            for sub_account in sub_accounts:
+                if sub_account.parent == '': sub_account.parent = account.name
     return accounts
 
 
