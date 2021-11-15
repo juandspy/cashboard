@@ -2,7 +2,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 from testdata.mocks import mock_book, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, OPENING_BALANCE_NAME, \
-    ASSETS_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME
+    ASSETS_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, EXPENSES_NAME
 from cashstore import CashStore
 
 
@@ -12,7 +12,7 @@ def test_CashStore_accounts():
     got_accounts = []
     for acc in mock_store.accounts:
         got_accounts.append(acc.name)
-    assert got_accounts == [OPENING_BALANCE_NAME, ASSETS_NAME]
+    assert got_accounts == [OPENING_BALANCE_NAME, ASSETS_NAME, EXPENSES_NAME]
 
 def test_CashStore_assets():
     assert mock_store.assets == []
