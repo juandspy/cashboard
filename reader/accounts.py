@@ -49,14 +49,13 @@ def get_account_children(acc: piecash.core.account.Account,
                     name=account.name, 
                     current_balance=float(account.get_balance(natural_sign=False)), 
                     currency=account.commodity,
-                    account=account)
+                    account=account,
+                    parent=acc.name)
                 )
         else: 
             current_depth += 1 
             sub_accounts = get_account_children(account, current_depth=current_depth, depth=depth)
             accounts.extend(sub_accounts)
-            for sub_account in sub_accounts:
-                if sub_account.parent == '': sub_account.parent = account.name
     return accounts
 
 

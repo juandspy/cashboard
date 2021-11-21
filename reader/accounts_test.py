@@ -2,7 +2,7 @@ import pytest
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
-from testdata.mocks import mock_book, CURRENT_ASSETS_NAME, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, CAR_EXPENSES_NAME, GAS_EXPENSES_NAME
+from testdata.mocks import mock_book, CURRENT_ASSETS_NAME, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, CAR_EXPENSES_NAME, GAS_EXPENSES_NAME, ASSETS_NAME
 from cashstore import CashStore
 
 mock_store = CashStore(book=mock_book)
@@ -22,7 +22,7 @@ def test_get_account_children():
     # if current depth differs in 1 unit to desired depth, just the first children account is returned (current assets)
     sub_accounts = get_account_children(book_assets, 0, 1)
     assert accounts_to_account_names(sub_accounts) == [CURRENT_ASSETS_NAME]
-    assert accounts_to_account_parents(sub_accounts) == ['']
+    assert accounts_to_account_parents(sub_accounts) == [ASSETS_NAME]
     # if current depth differs in 2 units to desired depth, Current Assets immediate children are returned
     sub_accounts = get_account_children(book_assets, 0, 2)
     assert accounts_to_account_names(sub_accounts) == [BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME]
