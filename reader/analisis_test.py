@@ -7,7 +7,7 @@ from testdata.mocks import mock_book, transaction_date, opening_transaction_date
 from cashstore import CashStore
 
 mock_store = CashStore(book=mock_book)
-mock_store.set_assets_depth(1)
+mock_store.set_assets_depth(2)
 bank_account = mock_store.assets[0]
 
 def test_get_daily_delta():

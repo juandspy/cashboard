@@ -41,10 +41,11 @@ def get_account_children(acc: piecash.core.account.Account,
     
     accounts = []
     for account in acc.children:
+        print("    ", 1, account.name)
         if current_depth > depth:
             return accounts 
-        if len(account.children) <= 1 or current_depth + 1 == depth:
-            accounts.append(
+        if len(account.children) < 1 or current_depth + 1 == depth:
+            new_account = (
                 CashAccount(
                     name=account.name, 
                     current_balance=float(account.get_balance(natural_sign=False)), 
@@ -52,6 +53,10 @@ def get_account_children(acc: piecash.core.account.Account,
                     account=account,
                     parent=acc.name)
                 )
+            print("        ", 2, new_account.name)
+            print("        ", 2, new_account.parent)
+            print("        ", 2, new_account.current_balance)
+            accounts.append(new_account)
         else: 
             current_depth += 1 
             sub_accounts = get_account_children(account, current_depth=current_depth, depth=depth)
@@ -67,7 +72,6 @@ def get_book_accounts_of_type(type: str, book: piecash.core.book.Book, depth: in
 
     Check assets_test.py test_get_book_assets for further understanding.
     """
-    assets = []
-    for acc in book.accounts(type=type).children:
-        assets.extend(get_account_children(acc, depth=depth))
-    return assets
+    account_of_type = book.accounts(type=type)
+    print(0, account_of_type.name)
+    return get_account_children(account_of_type, depth=depth)

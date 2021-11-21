@@ -19,6 +19,7 @@ def test_get_account_children():
     assert get_account_children(book_assets, 1, 1) == [] 
     # if current depth higher than depth, it should return an empty list
     assert get_account_children(book_assets, 1, 0) == [] 
+
     # if current depth differs in 1 unit to desired depth, just the first children account is returned (current assets)
     sub_accounts = get_account_children(book_assets, 0, 1)
     assert accounts_to_account_names(sub_accounts) == [CURRENT_ASSETS_NAME]
@@ -35,22 +36,36 @@ def test_get_account_children():
 from accounts import get_book_accounts_of_type
 
 def test_get_book_assets():
-    print("1")
-    assert accounts_to_account_names(get_book_accounts_of_type('ASSET', mock_store.book, depth=0))  == []
-    assert accounts_to_account_names(get_book_accounts_of_type('ASSET', mock_store.book, depth=1))  == [BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME]
-    assert accounts_to_account_names(get_book_accounts_of_type('ASSET', mock_store.book, depth=2)) == [BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, CASH_ACCOUNT_NAME]
+    assets = get_book_accounts_of_type('ASSET', mock_store.book, depth=0)
+    assert accounts_to_account_names(assets)  == []
+
+    assets = get_book_accounts_of_type('ASSET', mock_store.book, depth=1)
+    assert accounts_to_account_names(assets)  == [CURRENT_ASSETS_NAME]
+    assert accounts_to_account_parents(assets)  == [ASSETS_NAME]
+
+    assets = get_book_accounts_of_type('ASSET', mock_store.book, depth=2)
+    assert accounts_to_account_names(assets)  == [BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME]
+    assert accounts_to_account_parents(assets)  == [CURRENT_ASSETS_NAME, CURRENT_ASSETS_NAME]
+
+    assets = get_book_accounts_of_type('ASSET', mock_store.book, depth=3)
+    assert accounts_to_account_names(assets) == [BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, CASH_ACCOUNT_NAME]
+    assert accounts_to_account_parents(assets)  == [BANK_ACCOUNT_NAME, BANK_ACCOUNT_NAME, CURRENT_ASSETS_NAME]
 
 def test_get_book_expenses():
-    sub_accounts = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=0)
-    assert accounts_to_account_names(sub_accounts)  == []
-    assert accounts_to_account_parents(sub_accounts) == []
+    expenses = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=0)
+    assert accounts_to_account_names(expenses)  == []
+    assert accounts_to_account_parents(expenses) == []
 
-    sub_accounts = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=1)
-    assert accounts_to_account_names(sub_accounts)  == [GAS_EXPENSES_NAME]
-    assert accounts_to_account_parents(sub_accounts) == [CAR_EXPENSES_NAME]
+    expenses = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=1)
+    assert accounts_to_account_names(expenses)  == [CAR_EXPENSES_NAME]
+    assert accounts_to_account_parents(expenses) == [EXPENSES_NAME]
+
+    expenses = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=2)
+    assert accounts_to_account_names(expenses)  == [GAS_EXPENSES_NAME]
+    assert accounts_to_account_parents(expenses) == [CAR_EXPENSES_NAME]
 
 def test_get_daily_balance():
-    mock_store.set_assets_depth(1)
+    mock_store.set_assets_depth(2)
     bank_account = mock_store.assets[0]
 
     assert not bank_account.get_daily_balance().empty
