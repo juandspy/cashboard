@@ -15,16 +15,18 @@ N_DELTA_DAYS = 30
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 
-def get_asset_delta(asset, from_date):
-    from reader.delta import get_asset_delta as gad
+def get_account_delta(asset, from_date):
+    from reader.delta import get_account_delta as gad
     return gad(asset, from_date)
 
 # @st.cache
 def load_data(depth: int = 1):
+    print("Loading data", depth)
     store = CashStore(book_path=config.database)
     store.set_assets_depth(depth=depth)
-
-    return store.assets
+    store.set_expenses_depth(depth=depth)
+    
+    return store.assets, store.expenses
 
 def pretty_currency(currency: str) -> str:
     mapping = { 'EUR':'€', 'USD':'$'}
