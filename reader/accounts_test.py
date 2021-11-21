@@ -2,7 +2,7 @@ import pytest
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
-from testdata.mocks import mock_book, CURRENT_ASSETS_NAME, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, CAR_EXPENSES_NAME, GAS_EXPENSES_NAME, ASSETS_NAME
+from testdata.mocks import mock_book, CURRENT_ASSETS_NAME, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, GAS_EXPENSES_NAME, ASSETS_NAME, CAR_EXPENSES_NAME, EXPENSES_NAME
 from cashstore import CashStore
 
 mock_store = CashStore(book=mock_book)
@@ -35,13 +35,19 @@ def test_get_account_children():
 from accounts import get_book_accounts_of_type
 
 def test_get_book_assets():
+    print("1")
     assert accounts_to_account_names(get_book_accounts_of_type('ASSET', mock_store.book, depth=0))  == []
     assert accounts_to_account_names(get_book_accounts_of_type('ASSET', mock_store.book, depth=1))  == [BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME]
     assert accounts_to_account_names(get_book_accounts_of_type('ASSET', mock_store.book, depth=2)) == [BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, CASH_ACCOUNT_NAME]
 
 def test_get_book_expenses():
-    assert accounts_to_account_names(get_book_accounts_of_type('EXPENSE', mock_store.book, depth=0))  == []
-    assert accounts_to_account_names(get_book_accounts_of_type('EXPENSE', mock_store.book, depth=1))  == [GAS_EXPENSES_NAME]
+    sub_accounts = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=0)
+    assert accounts_to_account_names(sub_accounts)  == []
+    assert accounts_to_account_parents(sub_accounts) == []
+
+    sub_accounts = get_book_accounts_of_type('EXPENSE', mock_store.book, depth=1)
+    assert accounts_to_account_names(sub_accounts)  == [GAS_EXPENSES_NAME]
+    assert accounts_to_account_parents(sub_accounts) == [CAR_EXPENSES_NAME]
 
 def test_get_daily_balance():
     mock_store.set_assets_depth(1)
