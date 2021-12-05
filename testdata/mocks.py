@@ -10,6 +10,10 @@ ASSETS_NAME = "Assets"
 CURRENT_ASSETS_NAME = "Current Assets"
 CASH_ACCOUNT_NAME = "Cash account"
 
+EXPENSES_NAME="Expenses"
+CAR_EXPENSES_NAME="Car"
+GAS_EXPENSES_NAME="Gas"
+
 TRANSACTION_VALUE = 100
 BANK_INITIAL_VALUE = 1000
 CASH_INITIAL_VALUE = 100
@@ -18,6 +22,14 @@ MONTHS_AFTER_INITIAL_OPENING = 6
 
 mock_book = piecash.create_book(currency="EUR")
 EUR = mock_book.commodities.get(mnemonic="EUR")
+
+now = datetime.now()
+
+opening_balance_month = now.month - MONTHS_AFTER_INITIAL_OPENING
+if opening_balance_month <= 0: opening_balance_month+=12
+opening_transaction_date = now.replace(month=opening_balance_month)
+
+transaction_date = now.replace(day=now.day - 1)
 
 opening_balance = piecash.Account(name=OPENING_BALANCE_NAME,
     type="EQUITY",
@@ -68,11 +80,26 @@ cash = piecash.Account(name=CASH_ACCOUNT_NAME,
     description="my cash in wallet",
     code="CASH1",)
 
-now = datetime.now()
+expenses = piecash.Account(name=EXPENSES_NAME,
+    type="EXPENSE",
+    parent=mock_book.root_account,
+    commodity=EUR,
+    placeholder=True,)
 
-opening_balance_month = now.month - MONTHS_AFTER_INITIAL_OPENING
-if opening_balance_month <= 0: opening_balance_month+=12
-opening_transaction_date = now.replace(month=opening_balance_month)
+car = piecash.Account(name=CAR_EXPENSES_NAME,
+    type="EXPENSE",
+    parent=expenses,
+    commodity=EUR,
+    description="car expenses",
+    code="CAR",)
+
+gas = piecash.Account(name=GAS_EXPENSES_NAME,
+    type="EXPENSE",
+    parent=car,
+    commodity=EUR,
+    description="gas expenses",
+    code="GAS",)
+
 for (acc, balance) in zip ([bank, cash], [BANK_INITIAL_VALUE, CASH_INITIAL_VALUE]):
     single_transaction(
         post_date=opening_transaction_date.date(),
@@ -82,7 +109,6 @@ for (acc, balance) in zip ([bank, cash], [BANK_INITIAL_VALUE, CASH_INITIAL_VALUE
         from_account=opening_balance,
         to_account=acc)
 
-transaction_date = now.replace(day=now.day - 1)
 single_transaction(
     post_date=transaction_date.date(),
     enter_date=transaction_date,

@@ -4,36 +4,49 @@ from datetime import datetime
 import pandas as pd
 
 
-from utils import load_data, pretty_currency, get_asset_delta, \
+from utils import load_data, pretty_currency, get_account_delta, \
     daily_to_monthly, MONTHS, date_index_to_str
 from predictions import get_linear_regression, get_polynomial_regression
 
+METRICS_PER_ROW = 3
 
 now = datetime.now()
 
 st.title('Cashboard')
 
-input_columns = st.columns(3)
-depth = input_columns[0].number_input('Insert desired depth', value=1, step=1)
+input_columns = st.columns(4)
+depth = input_columns[0].number_input('Insert desired depth', value=3, step=1)
 year = input_columns[1].number_input("Year", value=2021, step=1)
 plot_all_years = input_columns[2].checkbox("Plot all years")
 delta_percentage = input_columns[2].checkbox("Delta in percentage")
-reg_degree = input_columns[2].number_input(
+reg_degree = input_columns[3].number_input(
     "Regression degree", value=1, step=1, min_value=1, max_value=3)
 
-assets = load_data(depth)
+assets, expenses = load_data(depth)
 
 st.subheader('Assets')
-assets_columns = st.columns(len(assets))
+n_assets = len(assets)
+assets_columns = None
+num_rows = round(n_assets / METRICS_PER_ROW)
 
-st.subheader('Year gains')
+for row in range(num_rows):
+    if assets_columns is None:
+        assets_columns = st.columns(METRICS_PER_ROW)
+    else:
+        assets_columns += st.columns(METRICS_PER_ROW)
 
-fig = go.Figure()
+if n_assets % METRICS_PER_ROW != 0:
+    assets_columns += st.columns(n_assets % METRICS_PER_ROW)
+
+# st.subheader('Year gains')
+
+fig_gains = go.Figure()
 
 total_monthly_balance = None
 for col, asset in zip(assets_columns, assets):
+    print(asset.name)
     # Fill metrics
-    delta = float(get_asset_delta(asset, now.replace(month=now.month - 1 or 12).date())  )# TODO: cache
+    delta = float(get_account_delta(asset, now.replace(month=now.month - 1 or 12).date())  )# TODO: cache
     if delta_percentage:
         if delta != 0:
             delta = "{:.2f} %".format(delta/asset.current_balance*100)
@@ -57,13 +70,13 @@ for col, asset in zip(assets_columns, assets):
     else:
         total_monthly_balance = total_monthly_balance.add(monthly_balance, fill_value=0)
     if plot_all_years:
-        fig.add_trace(go.Bar(
+        fig_gains.add_trace(go.Bar(
             x=date_index_to_str(monthly_balance),
             y=monthly_balance.values,
             name=asset.name
         ))
     else:        
-        fig.add_trace(go.Bar(
+        fig_gains.add_trace(go.Bar(
             x=MONTHS,
             y=monthly_balance.iloc[
                 monthly_balance.index.get_level_values('Year') == year],
@@ -85,10 +98,20 @@ else:
         degree=reg_degree)
 
 if plot_all_years:
-    fig.add_trace(go.Scatter(
+    fig_gains.add_trace(go.Scatter(
         x=date_index_to_str(total_monthly_balance),
         y=y_pred
     ))
 # Here we modify the tickangle of the xaxis, resulting in rotated labels.
-fig.update_layout(barmode='stack', xaxis_tickangle=-45)
-st.plotly_chart(fig)
+fig_gains.update_layout(
+    barmode='stack', 
+    xaxis_tickangle=-45,
+    title = "Year gains")
+
+with st.expander("Year gains"):
+    st.plotly_chart(fig_gains)
+
+with st.expander("Year expenses"):
+    from expenses import plot_expenses
+    fig = plot_expenses(expenses)
+    st.plotly_chart(fig)
