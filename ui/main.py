@@ -1,66 +1,24 @@
 import streamlit as st
-import plotly.graph_objects as go
-from datetime import datetime
-import pandas as pd
 
 
-from utils import load_data, pretty_currency, get_account_delta, \
-    daily_to_monthly, MONTHS, date_index_to_str
-from predictions import get_linear_regression, get_polynomial_regression
-
-METRICS_PER_ROW = 3
-
-now = datetime.now()
+from utils import load_data
+from metrics import get_assets_columns, add_metrics
+from inputs import setup_inputs
 
 st.title('Cashboard')
 
-input_columns = st.columns(4)
-depth = input_columns[0].number_input('Insert desired depth', value=3, step=1)
-year = input_columns[1].number_input("Year", value=2021, step=1)
-plot_all_years = input_columns[2].checkbox("Plot all years")
-delta_percentage = input_columns[2].checkbox("Delta in percentage")
-reg_degree = input_columns[3].number_input(
-    "Regression degree", value=1, step=1, min_value=1, max_value=3)
-
+depth, year, plot_all_years, delta_percentage, reg_degree = setup_inputs()
 assets, expenses = load_data(depth)
 
 st.subheader('Assets')
-n_assets = len(assets)
-assets_columns = None
-num_rows = round(n_assets / METRICS_PER_ROW)
-
-for row in range(num_rows):
-    if assets_columns is None:
-        assets_columns = st.columns(METRICS_PER_ROW)
-    else:
-        assets_columns += st.columns(METRICS_PER_ROW)
-
-if n_assets % METRICS_PER_ROW != 0:
-    assets_columns += st.columns(n_assets % METRICS_PER_ROW)
-
-# st.subheader('Year gains')
+assets_columns = get_assets_columns(len(assets))
+for col, asset in zip(assets_columns, assets):
+    add_metrics(col, asset, delta_percentage)
 
 fig_gains = go.Figure()
 
 total_monthly_balance = None
 for col, asset in zip(assets_columns, assets):
-    print(asset.name)
-    # Fill metrics
-    delta = float(get_account_delta(asset, now.replace(month=now.month - 1 or 12).date())  )# TODO: cache
-    if delta_percentage:
-        if delta != 0:
-            delta = "{:.2f} %".format(delta/asset.current_balance*100)
-
-    if delta == 0:
-        delta = None
-
-    col.metric(
-        asset.name, 
-        "{} {}".format(
-            asset.current_balance, 
-            pretty_currency(asset.currency)),
-        delta)
-    
     # Fill graph
     daily_balance = asset.get_daily_balance()
     monthly_balance = daily_to_monthly(daily_balance)
