@@ -9,18 +9,21 @@ from reader.accounts import CashAccount
 # TODO: Make a plot_sunburst using the parents.
 
 
-def plot_pie(labels: List[str], values: List[float]) -> go.Figure:
+def plot_pie(labels: List[str], values: List[float], name: str) -> go.Figure:
     """Plots a pie graph.
 
     Args:
         labels (List[str]): labels.
         values (List[float]): values.
+        name (str): graph name.
 
     Returns:
         plotly.graph_objects.Figure: the pie chart Plotly figure.
     """
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.3)])
-    fig.update_layout(margin=dict(t=0, l=0, r=0, b=0))
+    fig = go.Figure(
+        data=[go.Pie(labels=labels, values=values, hole=.3)])
+    fig.update_layout(margin=dict(t=0, l=0, r=0, b=0),
+                      showlegend=False, title=name)
     return fig
 
 
@@ -40,7 +43,27 @@ def plot_expenses(expenses: List[CashAccount]) -> go.Figure:
         values.append(expense.current_balance)
     labels = remove_accents(labels)
     labels, values = remove_zeros(labels, values)
-    return plot_pie(labels, values)
+    return plot_pie(labels, values, "Expenses")
+
+
+def plot_income(income_accounts: List[CashAccount]) -> go.Figure:
+    """Plots a piechart of the incomes.
+
+    Args:
+        income_accounts (List[CashAccount]): list of income accounts.
+
+    Returns:
+        plotly.graph_objects.Figure: the pie chart Plotly figure.
+    """
+    labels = []
+    values = []
+    for income in income_accounts:
+        labels.append(income.name)
+        # it is necessary to change the sign
+        values.append(-income.current_balance)
+    labels = remove_accents(labels)
+    labels, values = remove_zeros(labels, values)
+    return plot_pie(labels, values, "Income")
 
 
 def remove_zeros(

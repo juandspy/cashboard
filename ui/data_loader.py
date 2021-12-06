@@ -17,5 +17,6 @@ def load_data(depth: int = 1):
     store = CashStore(book_path=config.database)
     store.set_assets_depth(depth=depth)
     store.set_expenses_depth(depth=depth)
+    store.set_incomes_depth(depth=depth)
 
-    return store.assets, store.expenses
+    return store.assets, store.expenses, store.incomes
