@@ -2,10 +2,10 @@
 """
 
 import plotly.graph_objects as go
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from streamlit import plotly_chart as st_plotly_chart
 
-from utils import daily_to_monthly, date_index_to_str
+from utils import daily_to_monthly, date_index_to_str, fill_series
 from predictions import get_linear_regression, get_polynomial_regression
 from reader.accounts import CashAccount
 
@@ -26,7 +26,7 @@ class HistoricalPlot:
         # accounts and make regression based on it
         self.total_monthly_balance: DataFrame = None
 
-    def add_account(self, account: CashAccount):
+    def add_account_balance(self, account: CashAccount):
         """Add a trace to the plot with the account monthly balance.
 
         Args:
@@ -52,6 +52,26 @@ class HistoricalPlot:
             x=date_index_to_str(monthly_balance),
             y=monthly_balance.values,
             name=account.name
+        ))
+
+    def add_account_diff(self, account: CashAccount, invert: bool = False):
+        """Add a trace to the plot with the account monthly gains and expenses.
+
+        Args:
+            account (CashAccount): the account.
+            invert (bool, optional): whether to invert the sign of the values. Defaults to false.
+        """
+        daily_balance = account.get_daily_balance()
+        monthly_balance = daily_to_monthly(daily_balance)
+        if invert:
+            monthly_balance = -monthly_balance
+
+        graph_y = monthly_balance_to_diff(monthly_balance).values
+        self.fig.add_trace(go.Bar(
+            x=date_index_to_str(monthly_balance),
+            y=graph_y,
+            name=account.name,
+            # marker={'color': y},
         ))
 
     def add_regression(self, degree: int = 1):
@@ -84,6 +104,27 @@ class HistoricalPlot:
         """Plots the graph as a streamlit graph object.
         """
         self.fig.update_layout(
-            barmode='stack',
+            barmode='relative',
             title=self.name)
         st_plotly_chart(self.fig)
+
+
+def monthly_balance_to_diff(in_s: Series) -> DataFrame:
+    """Generates a dataframe with the gains/expenses respective to previous month.
+
+    Args:
+        in_s (Series): input dataframe.
+
+    Returns:
+        DataFrame: output dataframe.
+    """
+    if in_s.empty:
+        return in_s
+    # Remove trailing zeros
+    for index, value in in_s.iloc[::-1].items():
+        if value == 0:
+            in_s.drop(index, inplace=True)
+        else:
+            break
+    out_s = in_s.diff()
+    return fill_series(out_s)

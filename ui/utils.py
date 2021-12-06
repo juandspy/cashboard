@@ -35,11 +35,11 @@ def daily_to_monthly(df: pd.Series) -> pd.Series:
         return df
     df = df.groupby([(df.index.year), (df.index.month)]).last()
     df.index.names = ["Year", "Month"]
-    df = fill_dataframe(df)
+    df = fill_series(df)
     return df
 
 
-def fill_dataframe(df: pd.Series) -> pd.Series:
+def fill_series(df: pd.Series) -> pd.Series:
     """Fill a pandas monthly series with zeros in case the month
     and year doesn't exist.
 
