@@ -1,3 +1,5 @@
+"""Constant values of the program.
+"""
 from datetime import datetime
 
 

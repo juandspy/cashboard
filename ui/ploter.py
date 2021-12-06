@@ -1,13 +1,25 @@
+"""Helper functions to plot graphs
+"""
+
 import plotly.graph_objects as go
 from pandas import DataFrame
 from streamlit import plotly_chart as st_plotly_chart
 
 from utils import daily_to_monthly, date_index_to_str
+from predictions import get_linear_regression, get_polynomial_regression
 from reader.accounts import CashAccount
 
 
 class HistoricalPlot:
+    """Contains functions to help the user plot some historical plots.
+    """
+
     def __init__(self, name: str):
+        """Initialize the class.
+
+        Args:
+            name (str): plot's name.
+        """
         self.name = name
         self.fig = go.Figure()
         # total_monthly_balance is used to stack the balance of all
@@ -15,6 +27,11 @@ class HistoricalPlot:
         self.total_monthly_balance: DataFrame = None
 
     def add_account(self, account: CashAccount):
+        """Add a trace to the plot with the account monthly balance.
+
+        Args:
+            account (CashAccount): the account.
+        """
         daily_balance = account.get_daily_balance()
         monthly_balance = daily_to_monthly(daily_balance)
 
@@ -38,7 +55,11 @@ class HistoricalPlot:
         ))
 
     def add_regression(self, degree: int = 1):
-        from predictions import get_linear_regression, get_polynomial_regression
+        """Add a trace with a regression of the stacked balance.
+
+        Args:
+            degree (int, optional): Regression degree. Defaults to 1.
+        """
         total_monthly_balance_no_zeros = self.total_monthly_balance.loc[~(
             self.total_monthly_balance == 0)]
 
@@ -60,6 +81,8 @@ class HistoricalPlot:
         ))
 
     def plot(self):
+        """Plots the graph as a streamlit graph object.
+        """
         self.fig.update_layout(
             barmode='stack',
             title=self.name)

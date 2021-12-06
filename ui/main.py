@@ -1,7 +1,10 @@
+"""The generation of the UI.
+"""
 from inputs import setup_inputs
 from metrics import get_assets_columns, add_metrics
-from utils import load_data
+from data_loader import load_data
 from ploter import HistoricalPlot
+
 
 import streamlit as st
 

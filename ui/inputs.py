@@ -1,7 +1,15 @@
+"""UI inputs.
+"""
 from streamlit import columns as streamlit_columns
 
 
-def setup_inputs():
+def setup_inputs() -> (int, bool, int):
+    """Place the inputs in the UI and returns its selected values.
+
+    Returns:
+        int, bool, int: depth; whether to show the delta as
+        percentage or not; and the regression degree.
+    """
     input_columns = streamlit_columns(3)
 
     depth = input_columns[0].number_input(
