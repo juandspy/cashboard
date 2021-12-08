@@ -3,8 +3,8 @@
 from datetime import datetime
 from piecash.core.factories import single_transaction
 
-from accounts import opening_balance, acc, bank, cash, mock_book
-from balance import set_initial_balance
+from testdata.accounts import opening_balance, acc, bank, cash, mock_book
+from testdata.balance import set_initial_balance
 
 TRANSACTION_VALUE = 100
 BANK_INITIAL_VALUE = 1000
