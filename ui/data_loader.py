@@ -9,8 +9,6 @@ from streamlit import cache as st_cache
 
 config = parse_config("config.toml")
 
-SHOW_MODE = False
-
 # TODO: Find the way to cache this
 
 
@@ -19,7 +17,7 @@ def load_data(depth: int = 1):
     Loads the data from a GNUCash file.
     """
     store = CashStore(book_path=config.database)
-    if SHOW_MODE:
+    if config.show_mode:
         from testdata.cashbook_generator import mock_book
         store = CashStore(book=mock_book)
     store.set_assets_depth(depth=depth)
