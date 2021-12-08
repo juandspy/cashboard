@@ -1,7 +1,5 @@
 config.toml
 __pycache__/
+.vscode/* 
 .pytest_cache/
 venv/
-
-.vscode/settings.json
-.gitignore
