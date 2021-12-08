@@ -69,7 +69,7 @@ def fill_series(df: pd.Series) -> pd.Series:
     return df
 
 
-def date_index_to_str(df: pd.Series) -> List:
+def date_index_to_str(index: pd.MultiIndex) -> List:
     """Converts the pandas series' index into a list of $MONTH-$YEAR.
 
     Args:
@@ -78,4 +78,4 @@ def date_index_to_str(df: pd.Series) -> List:
     Returns:
         List: the list of $MONTH-$YEAR data.
     """
-    return [f"{year}-{month}" for (year, month) in df.index]
+    return [f"{year}-{month}" for (year, month) in index]

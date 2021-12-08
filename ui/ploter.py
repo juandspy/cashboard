@@ -2,7 +2,7 @@
 """
 
 import plotly.graph_objects as go
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, MultiIndex
 from streamlit import plotly_chart as st_plotly_chart
 
 from utils import daily_to_monthly, date_index_to_str, fill_series
@@ -49,7 +49,7 @@ class HistoricalPlot:
                 monthly_balance, fill_value=0)
 
         self.fig.add_trace(go.Bar(
-            x=date_index_to_str(monthly_balance),
+            x=date_index_to_str(monthly_balance.index),
             y=monthly_balance.values,
             name=account.name
         ))
@@ -74,7 +74,7 @@ class HistoricalPlot:
             # marker={'color': y},
         ))
 
-    def add_regression(self, degree: int = 1):
+    def add_regression(self, degree: int = 1, months_to_add=0):
         """Add a trace with a regression of the stacked balance.
 
         Args:
@@ -83,19 +83,22 @@ class HistoricalPlot:
         total_monthly_balance_no_zeros = self.total_monthly_balance.loc[~(
             self.total_monthly_balance == 0)]
 
+        extended_index = add_months_to_index(
+            self.total_monthly_balance.index,
+            months_to_add)
         if degree == 1:
             y_pred = get_linear_regression(
                 total_monthly_balance_no_zeros.index,
                 total_monthly_balance_no_zeros.values,
-                self.total_monthly_balance.index)
+                extended_index)
         else:
             y_pred = get_polynomial_regression(
                 total_monthly_balance_no_zeros.index,
                 total_monthly_balance_no_zeros.values,
-                self.total_monthly_balance.index,
+                extended_index,
                 degree=degree)
         self.fig.add_trace(go.Scatter(
-            x=date_index_to_str(self.total_monthly_balance),
+            x=date_index_to_str(extended_index),
             y=y_pred,
             name="prediction"
         ))
@@ -128,3 +131,16 @@ def monthly_balance_to_diff(in_s: Series) -> DataFrame:
             break
     out_s = in_s.diff()
     return fill_series(out_s)
+
+
+def add_months_to_index(index: MultiIndex, n_months: int = 0) -> MultiIndex:
+    year, month = index[-1]
+    for i in range(n_months):
+        month += 1
+        if month >= 12:
+            month = 1
+            year += 1
+        index_to_append = MultiIndex.from_tuples(
+            [(year, month)], names=["Year", "Month"])
+        index = index.append(index_to_append)
+    return index

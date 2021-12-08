@@ -17,7 +17,7 @@ selectbox = st.sidebar.selectbox(
 
 st.title('Cashboard')
 
-depth, delta_percentage, reg_degree = setup_inputs()
+depth, delta_percentage, add_months_to_pred, reg_degree = setup_inputs()
 assets, expenses, incomes = load_data(depth)
 if selectbox == SELECTBOX_HOME:
     st.subheader('Assets')
@@ -28,7 +28,7 @@ if selectbox == SELECTBOX_HOME:
         add_metrics(col, asset, delta_percentage)
         balance_plot.add_account_balance(asset)
 
-    balance_plot.add_regression(reg_degree)
+    balance_plot.add_regression(reg_degree, add_months_to_pred)
 
     balance_plot.plot()
 
