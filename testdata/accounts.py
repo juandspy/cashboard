@@ -4,7 +4,8 @@ import piecash
 
 from testdata.const import BANK_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, \
     OPENING_BALANCE_NAME, ASSETS_NAME, CURRENT_ASSETS_NAME, CASH_ACCOUNT_NAME,\
-    EXPENSES_NAME, CAR_EXPENSES_NAME, GAS_EXPENSES_NAME
+    EXPENSES_NAME, CAR_EXPENSES_NAME, GAS_EXPENSES_NAME, \
+    INCOMES_NAME, SALARY_INCOMES_NAME
 
 BANK_INITIAL_VALUE = 1000
 CASH_INITIAL_VALUE = 100
@@ -80,3 +81,16 @@ gas = piecash.Account(name=GAS_EXPENSES_NAME,
                       commodity=EUR,
                       description="gas expenses",
                       code="GAS",)
+
+incomes = piecash.Account(name=INCOMES_NAME,
+                          type="INCOME",
+                          parent=mock_book.root_account,
+                          commodity=EUR,
+                          placeholder=True,)
+
+salary = piecash.Account(name=SALARY_INCOMES_NAME,
+                         type="INCOME",
+                         parent=incomes,
+                         commodity=EUR,
+                         description="salary income",
+                         code="SALARY",)

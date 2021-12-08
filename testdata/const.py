@@ -13,3 +13,6 @@ CASH_ACCOUNT_NAME = "Cash account"
 EXPENSES_NAME = "Expenses"
 CAR_EXPENSES_NAME = "Car"
 GAS_EXPENSES_NAME = "Gas"
+
+INCOMES_NAME = "Incomes"
+SALARY_INCOMES_NAME = "Salary"
