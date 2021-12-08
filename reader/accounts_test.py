@@ -1,6 +1,7 @@
 from accounts import get_book_accounts_of_type
 from cashstore import CashStore
-from testdata.mocks import mock_book, CURRENT_ASSETS_NAME, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, GAS_EXPENSES_NAME, ASSETS_NAME, CAR_EXPENSES_NAME, EXPENSES_NAME
+from testdata.mocks import mock_book
+from testdata.const import CURRENT_ASSETS_NAME, BANK_ACCOUNT_NAME, CASH_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, GAS_EXPENSES_NAME, ASSETS_NAME, CAR_EXPENSES_NAME, EXPENSES_NAME
 import pytest
 import os
 import sys
@@ -84,6 +85,7 @@ def test_get_book_expenses():
 
 def test_get_book_incomes():
     # TODO:
+    pass
 
 
 def test_get_daily_balance():

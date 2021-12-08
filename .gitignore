@@ -3,8 +3,5 @@ __pycache__/
 .pytest_cache/
 venv/
 
-testdata/*
-!testdata/my_cash.gnucash
-!testdata/mocks.py
 .vscode/settings.json
 .gitignore
