@@ -68,7 +68,7 @@ class HistoricalPlot:
 
         graph_y = monthly_balance_to_diff(monthly_balance).values
         self.fig.add_trace(go.Bar(
-            x=date_index_to_str(monthly_balance),
+            x=date_index_to_str(monthly_balance.index),
             y=graph_y,
             name=account.name,
             # marker={'color': y},
