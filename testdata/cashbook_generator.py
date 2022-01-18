@@ -26,7 +26,7 @@ for (acc, balance) in zip(
 
 # Create random expenses for each account every month
 for month in range(1, 13):
-    transaction_date = now.replace(month=month, day=1)
+    transaction_date = now.replace(month=month, day=2)
     for (acc, in_balance) in zip(
         [sub_bank_1, sub_bank_2, cash],
             [BANK_1_INITIAL_VALUE, BANK_2_INITIAL_VALUE, CASH_INITIAL_VALUE]):
