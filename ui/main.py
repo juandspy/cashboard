@@ -3,7 +3,7 @@
 from const import SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE
 from expenses import plot_expenses, plot_income
 from inputs import setup_inputs
-from metrics import get_assets_columns, add_metrics
+from metrics import fill_metrics
 from data_loader import load_data
 from ploter import HistoricalPlot
 
@@ -21,11 +21,10 @@ depth, delta_percentage, add_months_to_pred, reg_degree = setup_inputs()
 assets, expenses, incomes = load_data(depth)
 if selectbox == SELECTBOX_HOME:
     st.subheader('Assets')
-    assets_columns = get_assets_columns(len(assets))
+    fill_metrics(assets, delta_percentage)
     balance_plot = HistoricalPlot("Balance")
 
-    for col, asset in zip(assets_columns, assets):
-        add_metrics(col, asset, delta_percentage)
+    for asset in assets:
         balance_plot.add_account_balance(asset)
 
     balance_plot.add_regression(reg_degree, add_months_to_pred)
