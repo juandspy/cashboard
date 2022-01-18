@@ -16,10 +16,12 @@ def load_data(depth: int = 1):
     """
     Loads the data from a GNUCash file.
     """
-    store = CashStore(book_path=config.database)
     if config.show_mode:
         from testdata.cashbook_generator import mock_book
         store = CashStore(book=mock_book)
+    else:
+        store = CashStore(book_path=config.database)
+
     store.set_assets_depth(depth=depth)
     store.set_expenses_depth(depth=depth)
     store.set_incomes_depth(depth=depth)

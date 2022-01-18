@@ -1,7 +1,7 @@
 """Constant values used in testdata package.
 """
 
-
+EMPTY_ASSETS_NAME = "Empty account"
 BANK_ACCOUNT_NAME = "Bank account"
 BANK_SUB_ACCOUNT_1_NAME = "Bank account 1"
 BANK_SUB_ACCOUNT_2_NAME = "Bank account 2"
