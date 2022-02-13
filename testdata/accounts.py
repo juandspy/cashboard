@@ -3,7 +3,7 @@
 import piecash
 
 from testdata.const import BANK_ACCOUNT_NAME, BANK_SUB_ACCOUNT_1_NAME, BANK_SUB_ACCOUNT_2_NAME, \
-    OPENING_BALANCE_NAME, ASSETS_NAME, CURRENT_ASSETS_NAME, CASH_ACCOUNT_NAME,\
+    OPENING_BALANCE_NAME, ASSETS_NAME, CURRENT_ASSETS_NAME, EMPTY_ASSETS_NAME, CASH_ACCOUNT_NAME,\
     EXPENSES_NAME, CAR_EXPENSES_NAME, GAS_EXPENSES_NAME, \
     INCOMES_NAME, SALARY_INCOMES_NAME
 
@@ -61,6 +61,12 @@ cash = piecash.Account(name=CASH_ACCOUNT_NAME,
                        commodity_scu=CASH_INITIAL_VALUE,
                        description="my cash in wallet",
                        code="CASH1",)
+
+empty_asset = piecash.Account(name=EMPTY_ASSETS_NAME,
+                              type="ASSET",
+                              parent=acc,
+                              commodity=EUR,
+                              placeholder=True,)
 
 expenses = piecash.Account(name=EXPENSES_NAME,
                            type="EXPENSE",

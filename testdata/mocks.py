@@ -16,14 +16,14 @@ now = datetime.now()
 opening_balance_month = now.month - MONTHS_AFTER_INITIAL_OPENING
 if opening_balance_month <= 0:
     opening_balance_month += 12
-opening_transaction_date = now.replace(month=opening_balance_month)
-
-transaction_date = now.replace(day=now.day - 1)
+opening_transaction_date = now.replace(month=opening_balance_month, day=1)
 
 
 for (acc, balance) in zip([bank, cash], [BANK_INITIAL_VALUE, CASH_INITIAL_VALUE]):
     set_initial_balance(opening_transaction_date,
                         balance, opening_balance, acc)
+
+transaction_date = now.replace(day=now.day - 1)
 
 single_transaction(
     post_date=transaction_date.date(),
