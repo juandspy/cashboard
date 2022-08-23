@@ -4,6 +4,8 @@ import streamlit as st
 
 
 class Inputs:
+    """All the user inputs used by this tool."""
+
     def __init__(self, depth, delta_percentage, add_months_to_pred, reg_degree):
 
         self.depth = depth
