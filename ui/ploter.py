@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from pandas import DataFrame, Series, MultiIndex
 from streamlit import plotly_chart as st_plotly_chart
 
-from utils import daily_to_monthly, date_index_to_str, fill_series
+from ui_utils import daily_to_monthly, date_index_to_str, fill_series
 from predictions import get_linear_regression, get_polynomial_regression
 from reader.accounts import CashAccount
 

@@ -4,7 +4,7 @@ import streamlit as st
 from streamlit import columns as streamlit_columns
 
 from const import METRICS_PER_ROW, now
-from utils import pretty_currency
+from ui_utils import pretty_currency
 from reader.accounts import CashAccount
 from reader.delta import get_account_delta
 
