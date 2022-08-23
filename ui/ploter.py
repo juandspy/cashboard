@@ -134,6 +134,15 @@ def monthly_balance_to_diff(in_s: Series) -> DataFrame:
 
 
 def add_months_to_index(index: MultiIndex, n_months: int = 0) -> MultiIndex:
+    """Takes an index and adds the given number of months to it.
+
+    Args:
+        index (MultiIndex): the pandas multi index in form ["Year", "Month"].
+        n_months (int, optional): Number of months to add. Defaults to 0.
+
+    Returns:
+        MultiIndex: the extended pandas multi index.
+    """
     year, month = index[-1]
     for _ in range(n_months):
         month += 1
