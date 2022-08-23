@@ -17,7 +17,7 @@ def pretty_currency(currency: str) -> str:
     Returns:
         str: the currency simbol.
     """
-    mapping = {'EUR': '€', 'USD': '$'}
+    mapping = {"EUR": "€", "USD": "$"}
     currency = str(currency).split(":")[1][:-1]
     return mapping[currency] if currency in mapping else currency
 
@@ -53,12 +53,11 @@ def fill_series(df: pd.Series) -> pd.Series:
     last_year, last_month = df.index[-1]
 
     value = 0
-    for year in range(first_year, last_year+1):
+    for year in range(first_year, last_year + 1):
         for month in range(1, 13):
-            if (
-                (year == first_year) & (month < first_month)
-            ) | (
-                    (year == last_year) & (month > last_month)):
+            if ((year == first_year) & (month < first_month)) | (
+                (year == last_year) & (month > last_month)
+            ):
                 df.loc[year, month] = 0
             try:
                 value = df.loc[year, month]

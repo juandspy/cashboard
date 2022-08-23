@@ -9,7 +9,7 @@ class CashAccount:
     it uses and the piecash.Account object.
     """
 
-    def __init__(self, name, current_balance, currency, account=None, parent=''):
+    def __init__(self, name, current_balance, currency, account=None, parent=""):
         self.name = name
         self.current_balance = current_balance
         self.currency = currency
@@ -25,12 +25,13 @@ class CashAccount:
 
     def get_daily_balance(self):
         from reader.analisis import get_daily_balance
+
         return get_daily_balance(self)
 
 
-def get_account_children(acc: piecash.core.account.Account,
-                         current_depth: int = 0,
-                         depth: int = 0) -> List[CashAccount]:
+def get_account_children(
+    acc: piecash.core.account.Account, current_depth: int = 0, depth: int = 0
+) -> List[CashAccount]:
     """
     Process account children in a loop and return the list of the accounts that has no children.
     The accounts with children are ignored.
@@ -46,27 +47,28 @@ def get_account_children(acc: piecash.core.account.Account,
         if current_depth > depth:
             return accounts
         if len(account.children) < 1 or current_depth + 1 == depth:
-            new_account = (
-                CashAccount(
-                    name=account.name,
-                    current_balance=float(
-                        account.get_balance(natural_sign=False)),
-                    currency=account.commodity,
-                    account=account,
-                    parent=acc.name)
+            new_account = CashAccount(
+                name=account.name,
+                current_balance=float(account.get_balance(natural_sign=False)),
+                currency=account.commodity,
+                account=account,
+                parent=acc.name,
             )
             accounts.append(new_account)
         else:
             current_depth += 1
             sub_accounts = get_account_children(
-                account, current_depth=current_depth, depth=depth)
+                account, current_depth=current_depth, depth=depth
+            )
             accounts.extend(sub_accounts)
     return accounts
 
 
-def get_book_accounts_of_type(type: str, book: piecash.core.book.Book, depth: int = 0) -> List[CashAccount]:
+def get_book_accounts_of_type(
+    type: str, book: piecash.core.book.Book, depth: int = 0
+) -> List[CashAccount]:
     """
-    Returns all assets from the book with no children. If it finds an account with 
+    Returns all assets from the book with no children. If it finds an account with
     children but $depth is the desired, it returns that account instead of its
     children.
 

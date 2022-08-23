@@ -17,6 +17,9 @@ run: init ## Run the UI
 test: init ## Run unit tests and integration tests
 	${VENV_PATH}/bin/python3 -m pytest
 
+style:
+	pre-commit run --all-files
+
 help: ## Show this help screen
 	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
 	@echo ''

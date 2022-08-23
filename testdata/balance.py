@@ -12,4 +12,5 @@ def set_initial_balance(date, value, balance_account, account):
         description="initial balance",
         value=value,
         from_account=balance_account,
-        to_account=account)
+        to_account=account,
+    )
