@@ -3,7 +3,20 @@
 import streamlit as st
 
 
-def setup_inputs() -> (int, bool, int):
+class Inputs:
+    def __init__(
+        self,
+        depth,
+        delta_percentage,
+        add_months_to_pred,
+        reg_degree):
+
+        self.depth = depth
+        self.delta_percentage = delta_percentage
+        self.add_months_to_pred = add_months_to_pred
+        self.reg_degree = reg_degree
+
+def setup_inputs() -> Inputs:
     """Place the inputs in the UI and returns its selected values.
 
     Returns:
@@ -36,4 +49,9 @@ def setup_inputs() -> (int, bool, int):
         min_value=1,
         max_value=3)
 
-    return depth, delta_percentage, int(add_months_to_pred), int(reg_degree)
+    return Inputs(
+        depth, 
+        delta_percentage, 
+        int(add_months_to_pred), 
+        int(reg_degree)
+    )
