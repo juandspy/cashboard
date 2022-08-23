@@ -18,6 +18,7 @@ def load_data(depth: int = 1):
     """
     if config.show_mode:
         from testdata.cashbook_generator import mock_book
+
         store = CashStore(book=mock_book)
     else:
         store = CashStore(book_path=config.database)

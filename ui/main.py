@@ -10,17 +10,14 @@ from ploter import HistoricalPlot
 
 import streamlit as st
 
-selectbox = st.sidebar.selectbox(
-    "Section",
-    (SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE)
-)
+selectbox = st.sidebar.selectbox("Section", (SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE))
 
-st.title('Cashboard')
+st.title("Cashboard")
 
 inputs = setup_inputs()
 assets, expenses, incomes = load_data(inputs.depth)
 if selectbox == SELECTBOX_HOME:
-    st.subheader('Assets')
+    st.subheader("Assets")
     fill_metrics(assets, inputs.delta_percentage)
     balance_plot = HistoricalPlot("Balance")
 

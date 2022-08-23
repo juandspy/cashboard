@@ -11,8 +11,7 @@ from reader.accounts import CashAccount
 
 
 class HistoricalPlot:
-    """Contains functions to help the user plot some historical plots.
-    """
+    """Contains functions to help the user plot some historical plots."""
 
     def __init__(self, name: str):
         """Initialize the class.
@@ -46,13 +45,16 @@ class HistoricalPlot:
         else:
             # If total_monthly_balance is not empty, add this balance
             self.total_monthly_balance = self.total_monthly_balance.add(
-                monthly_balance, fill_value=0)
+                monthly_balance, fill_value=0
+            )
 
-        self.fig.add_trace(go.Bar(
-            x=date_index_to_str(monthly_balance.index),
-            y=monthly_balance.values,
-            name=account.name
-        ))
+        self.fig.add_trace(
+            go.Bar(
+                x=date_index_to_str(monthly_balance.index),
+                y=monthly_balance.values,
+                name=account.name,
+            )
+        )
 
     def add_account_diff(self, account: CashAccount, invert: bool = False):
         """Add a trace to the plot with the account monthly gains and expenses.
@@ -67,12 +69,14 @@ class HistoricalPlot:
             monthly_balance = -monthly_balance
 
         graph_y = monthly_balance_to_diff(monthly_balance).values
-        self.fig.add_trace(go.Bar(
-            x=date_index_to_str(monthly_balance.index),
-            y=graph_y,
-            name=account.name,
-            # marker={'color': y},
-        ))
+        self.fig.add_trace(
+            go.Bar(
+                x=date_index_to_str(monthly_balance.index),
+                y=graph_y,
+                name=account.name,
+                # marker={'color': y},
+            )
+        )
 
     def add_regression(self, degree: int = 1, months_to_add=0):
         """Add a trace with a regression of the stacked balance.
@@ -80,35 +84,33 @@ class HistoricalPlot:
         Args:
             degree (int, optional): Regression degree. Defaults to 1.
         """
-        total_monthly_balance_no_zeros = self.total_monthly_balance.loc[~(
-            self.total_monthly_balance == 0)]
+        total_monthly_balance_no_zeros = self.total_monthly_balance.loc[
+            ~(self.total_monthly_balance == 0)
+        ]
 
         extended_index = add_months_to_index(
-            self.total_monthly_balance.index,
-            months_to_add)
+            self.total_monthly_balance.index, months_to_add
+        )
         if degree == 1:
             y_pred = get_linear_regression(
                 total_monthly_balance_no_zeros.index,
                 total_monthly_balance_no_zeros.values,
-                extended_index)
+                extended_index,
+            )
         else:
             y_pred = get_polynomial_regression(
                 total_monthly_balance_no_zeros.index,
                 total_monthly_balance_no_zeros.values,
                 extended_index,
-                degree=degree)
-        self.fig.add_trace(go.Scatter(
-            x=date_index_to_str(extended_index),
-            y=y_pred,
-            name="prediction"
-        ))
+                degree=degree,
+            )
+        self.fig.add_trace(
+            go.Scatter(x=date_index_to_str(extended_index), y=y_pred, name="prediction")
+        )
 
     def plot(self):
-        """Plots the graph as a streamlit graph object.
-        """
-        self.fig.update_layout(
-            barmode='relative',
-            title=self.name)
+        """Plots the graph as a streamlit graph object."""
+        self.fig.update_layout(barmode="relative", title=self.name)
         st_plotly_chart(self.fig)
 
 
@@ -150,6 +152,7 @@ def add_months_to_index(index: MultiIndex, n_months: int = 0) -> MultiIndex:
             month = 1
             year += 1
         index_to_append = MultiIndex.from_tuples(
-            [(year, month)], names=["Year", "Month"])
+            [(year, month)], names=["Year", "Month"]
+        )
         index = index.append(index_to_append)
     return index

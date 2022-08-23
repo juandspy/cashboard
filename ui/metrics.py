@@ -65,12 +65,12 @@ def add_metrics(col: streamlit_columns, account: CashAccount, delta_percentage=F
     col.metric(
         account.name,
         f"{account.current_balance} {pretty_currency(account.currency)}",
-        delta)
+        delta,
+    )
 
 
 def fill_metrics(assets, delta_percentage):
-    non_empty_assets = [
-        asset for asset in assets if asset.current_balance != 0]
+    non_empty_assets = [asset for asset in assets if asset.current_balance != 0]
     empty_assets = [asset for asset in assets if asset.current_balance == 0]
 
     non_empty_assets_columns = get_assets_columns(len(non_empty_assets))

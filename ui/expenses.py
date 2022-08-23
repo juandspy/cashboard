@@ -20,10 +20,8 @@ def plot_pie(labels: List[str], values: List[float], name: str) -> go.Figure:
     Returns:
         plotly.graph_objects.Figure: the pie chart Plotly figure.
     """
-    fig = go.Figure(
-        data=[go.Pie(labels=labels, values=values, hole=.3)])
-    fig.update_layout(margin=dict(t=0, l=0, r=0, b=0),
-                      showlegend=False, title=name)
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.3)])
+    fig.update_layout(margin=dict(t=0, l=0, r=0, b=0), showlegend=False, title=name)
     return fig
 
 
@@ -66,9 +64,7 @@ def plot_income(income_accounts: List[CashAccount]) -> go.Figure:
     return plot_pie(labels, values, "Income")
 
 
-def remove_zeros(
-    labels: List[str], values: List[float]) \
-        -> (List[str], List[float]):
+def remove_zeros(labels: List[str], values: List[float]) -> (List[str], List[float]):
     """Remove zeros from the two input lists in case `values` element is 0.
 
     Args:
@@ -98,7 +94,7 @@ def remove_accents(my_list: List[str]) -> List[str]:
     """
     out = []
     for string in my_list:
-        nfkd_form = unicodedata.normalize('NFKD', string)
-        only_ascii = nfkd_form.encode('ASCII', 'ignore')
+        nfkd_form = unicodedata.normalize("NFKD", string)
+        only_ascii = nfkd_form.encode("ASCII", "ignore")
         out.append(only_ascii.decode())
     return out

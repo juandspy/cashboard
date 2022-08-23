@@ -18,12 +18,12 @@ def datetime_list_to_ordinal(input_list: List[datetime]) -> List:
     Returns:
         List(int): the list of ordinals.
     """
-    return [
-        datetime(year=xy, month=xm, day=1).toordinal() for (xy, xm) in input_list]
+    return [datetime(year=xy, month=xm, day=1).toordinal() for (xy, xm) in input_list]
 
 
-def treat_inputs(x_train: List[datetime], y_train: List[float], x_pred: List[datetime]) \
-        -> (List[datetime], List[datetime], List[datetime]):
+def treat_inputs(
+    x_train: List[datetime], y_train: List[float], x_pred: List[datetime]
+) -> (List[datetime], List[datetime], List[datetime]):
     """[summary]
 
     Args:
@@ -43,8 +43,8 @@ def treat_inputs(x_train: List[datetime], y_train: List[float], x_pred: List[dat
 
 
 def get_linear_regression(
-    x_train: List[datetime], y_train: List[float], x_pred: List[datetime]) \
-        -> List:
+    x_train: List[datetime], y_train: List[float], x_pred: List[datetime]
+) -> List:
     """Computes a linear regression.
 
     Args:
@@ -65,7 +65,11 @@ def get_linear_regression(
 
 
 def get_polynomial_regression(
-        x_train: List[datetime], y_train: List[datetime], x_pred: List[datetime], degree: int = 2):
+    x_train: List[datetime],
+    y_train: List[datetime],
+    x_pred: List[datetime],
+    degree: int = 2,
+):
     """Computes a polynomial regression.
 
     Args:

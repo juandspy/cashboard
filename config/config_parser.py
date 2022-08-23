@@ -9,10 +9,8 @@ class Configuration:
 
 def parse_config(config_path: str):
     """
-    Reads the config placed at config_path and returns a 
+    Reads the config placed at config_path and returns a
     Configuration object filled.
     """
     conf = toml.load(config_path)
-    return Configuration(
-        conf["database"]["path"],
-        conf["show_mode"])
+    return Configuration(conf["database"]["path"], conf["show_mode"])
