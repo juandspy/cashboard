@@ -1,6 +1,6 @@
 """The generation of the UI.
 """
-from const import SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE
+from const import SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE, SELECTBOX_CUSTOM_QUERY
 from expenses import plot_expenses, plot_income
 from inputs import setup_inputs
 from metrics import fill_metrics
@@ -10,12 +10,17 @@ from ploter import HistoricalPlot
 
 import streamlit as st
 
-selectbox = st.sidebar.selectbox("Section", (SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE))
+selectbox = st.sidebar.selectbox(
+    "Section", (SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE, SELECTBOX_CUSTOM_QUERY)
+)
 
 st.title("Cashboard")
 
 inputs = setup_inputs()
-assets, expenses, incomes = load_data(inputs.depth)
+
+store = load_data(inputs.depth)
+assets, expenses, incomes = store.assets, store.expenses, store.incomes
+
 if selectbox == SELECTBOX_HOME:
     st.subheader("Assets")
     fill_metrics(assets, inputs.delta_percentage)
@@ -42,3 +47,21 @@ elif selectbox == SELECTBOX_INCOME_EXPENSE:
 
     income_col.plotly_chart(plot_expenses(expenses), use_container_width=True)
     expenses_col.plotly_chart(plot_income(incomes), use_container_width=True)
+
+elif selectbox == SELECTBOX_CUSTOM_QUERY:
+    store = load_data(inputs.depth)
+    st.markdown(
+        "Here you can run custom queries. Check the database schema [here](https://piecash.readthedocs.io/en/master/_images/schema.png)."
+    )
+    sql_query = st.text_input(
+        "Write here your SQL query.",
+        placeholder="SELECT name, account_type FROM accounts",
+    )
+
+    if sql_query:
+        with st.spinner("Running SQL query"):
+            results = store.run_sql(sql_query)
+            parsed_results = []
+            for row in results:
+                parsed_results.append(row)
+            st.dataframe(parsed_results)
