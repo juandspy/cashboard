@@ -49,7 +49,6 @@ elif selectbox == SELECTBOX_INCOME_EXPENSE:
     expenses_col.plotly_chart(plot_income(incomes), use_container_width=True)
 
 elif selectbox == SELECTBOX_CUSTOM_QUERY:
-    store = load_data(inputs.depth)
     st.markdown(
         "Here you can run custom queries. Check the database schema [here](https://piecash.readthedocs.io/en/master/_images/schema.png)."
     )
