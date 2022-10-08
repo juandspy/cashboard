@@ -6,6 +6,7 @@ from inputs import setup_inputs
 from metrics import fill_metrics
 from data_loader import load_data
 from ploter import HistoricalPlot
+import pandas as pd
 
 
 import streamlit as st
@@ -60,7 +61,10 @@ elif selectbox == SELECTBOX_CUSTOM_QUERY:
     if sql_query:
         with st.spinner("Running SQL query"):
             results = store.run_sql(sql_query)
+
             parsed_results = []
             for row in results:
                 parsed_results.append(row)
-            st.dataframe(parsed_results)
+            df = pd.DataFrame(parsed_results, columns=results.keys())
+
+            st.dataframe(df)
