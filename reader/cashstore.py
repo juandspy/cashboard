@@ -2,7 +2,7 @@ import piecash
 from typing import List
 
 from reader.accounts import get_book_accounts_of_type
-
+from reader.make_sql import run_sql
 
 DEFAULT_ASSETS_DEPTH = 0
 DEFAULT_EXPENSES_DEPTH = 0
@@ -26,7 +26,11 @@ class CashStore:
     def __init__(self, book_path=None, book=None):
         if (book == None) & (book_path != None):
             self.book = piecash.open_book(
-                book_path, readonly=True, do_backup=True, open_if_lock=True
+                book_path,
+                readonly=True,
+                do_backup=True,
+                open_if_lock=True,
+                check_same_thread=False,
             )
         elif book != None:
             self.book = book
@@ -71,3 +75,6 @@ class CashStore:
             income.split_df = self.splits_df.loc[
                 self.splits_df["account.fullname"] == income.account.fullname
             ]
+
+    def run_sql(self, query):
+        return run_sql(self.book, query)
