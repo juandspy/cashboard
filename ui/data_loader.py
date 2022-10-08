@@ -1,11 +1,8 @@
 """
 This module contains the required functions to load the data.
 """
-from sqlite3 import Connection
 from config.config_parser import parse_config
 from reader.cashstore import CashStore
-
-from streamlit import cache as st_cache
 
 config = parse_config("config.toml")
 
@@ -27,4 +24,4 @@ def load_data(depth: int = 1):
     store.set_expenses_depth(depth=depth)
     store.set_incomes_depth(depth=depth)
 
-    return store.assets, store.expenses, store.incomes
+    return store

@@ -1,21 +1,26 @@
 """The generation of the UI.
 """
-from const import SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE
+from const import SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE, SELECTBOX_CUSTOM_QUERY
 from expenses import plot_expenses, plot_income
 from inputs import setup_inputs
 from metrics import fill_metrics
 from data_loader import load_data
 from ploter import HistoricalPlot
-
+from custom_query import render as custom_query_render
 
 import streamlit as st
 
-selectbox = st.sidebar.selectbox("Section", (SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE))
+selectbox = st.sidebar.selectbox(
+    "Section", (SELECTBOX_HOME, SELECTBOX_INCOME_EXPENSE, SELECTBOX_CUSTOM_QUERY)
+)
 
 st.title("Cashboard")
 
 inputs = setup_inputs()
-assets, expenses, incomes = load_data(inputs.depth)
+
+store = load_data(inputs.depth)
+assets, expenses, incomes = store.assets, store.expenses, store.incomes
+
 if selectbox == SELECTBOX_HOME:
     st.subheader("Assets")
     fill_metrics(assets, inputs.delta_percentage)
@@ -42,3 +47,6 @@ elif selectbox == SELECTBOX_INCOME_EXPENSE:
 
     income_col.plotly_chart(plot_expenses(expenses), use_container_width=True)
     expenses_col.plotly_chart(plot_income(incomes), use_container_width=True)
+
+elif selectbox == SELECTBOX_CUSTOM_QUERY:
+    custom_query_render(store)
