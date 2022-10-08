@@ -6,8 +6,7 @@ from inputs import setup_inputs
 from metrics import fill_metrics
 from data_loader import load_data
 from ploter import HistoricalPlot
-import pandas as pd
-
+from custom_query import render as custom_query_render
 
 import streamlit as st
 
@@ -50,50 +49,4 @@ elif selectbox == SELECTBOX_INCOME_EXPENSE:
     expenses_col.plotly_chart(plot_income(incomes), use_container_width=True)
 
 elif selectbox == SELECTBOX_CUSTOM_QUERY:
-    st.markdown(
-        "Here you can run custom queries. Check the database schema [here](https://piecash.readthedocs.io/en/master/_images/schema.png)."
-    )
-    sql_query = st.text_area(
-        "Write here your SQL query.",
-        placeholder="SELECT name, account_type FROM accounts",
-    )
-
-    st.write("Some examples:")
-
-    with st.expander("Aggregate all the transactions starting with 'CUSTOM_START'"):
-        st.code(
-            """
-SELECT SUM(value_num)/100 FROM (
-
-SELECT joined.value_num, t.description, t.post_date, t.enter_date
-FROM
-	(
-		SELECT to_accounts.tx_guid, from_accounts.account_guid AS from_account, to_accounts.account_guid AS to_account, to_accounts.value_num
-		FROM
-		(
-		SELECT tx_guid, account_guid, value_num
-		FROM splits
-		WHERE value_num > 0
-		) AS to_accounts,
-		(
-		SELECT tx_guid, account_guid, value_num
-		FROM splits
-		WHERE value_num < 0
-		) AS from_accounts
-		WHERE to_accounts.tx_guid = from_accounts.tx_guid
-	) AS joined, transactions as t
-	WHERE t.guid = joined.tx_guid AND t.description LIKE "CUSTOM_START%"
-)
-        """
-        )
-
-    if sql_query:
-        with st.spinner("Running SQL query"):
-            results = store.run_sql(sql_query)
-
-            parsed_results = []
-            for row in results:
-                parsed_results.append(row)
-            df = pd.DataFrame(parsed_results, columns=results.keys())
-
-            st.dataframe(df)
+    custom_query_render(store)
