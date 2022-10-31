@@ -2,6 +2,7 @@
 """
 import streamlit as st
 from streamlit import columns as streamlit_columns
+import datetime
 
 from const import METRICS_PER_ROW, now
 from ui_utils import pretty_currency
@@ -51,7 +52,7 @@ def add_metrics(col: streamlit_columns, account: CashAccount, delta_percentage=F
         delta_percentage (bool, optional): Whether to show the delta as percentage or
         absolute value. Defaults to False.
     """
-    last_month_date = now.replace(month=now.month - 1 or 12).date()
+    last_month_date = (now - datetime.timedelta(days=30)).date()
     delta = float(get_account_delta(account, last_month_date))
     if delta == 0:
         delta = None
